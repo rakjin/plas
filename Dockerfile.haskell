@@ -1,0 +1,5 @@
+# vim: set filetype=dockerfile:
+FROM haskell
+
+COPY src /root/
+WORKDIR /root
