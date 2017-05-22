@@ -3,7 +3,7 @@ public class LookAndSay {
         System.out.println(ant(10));
     }
 
-    public static String ant(int n) {
+    private static String ant(int n) {
         String s = "1";
         for (int line = 0; line < 10; line++) {
             s = next(s);
@@ -11,7 +11,7 @@ public class LookAndSay {
         return s;
     }
 
-    public static String next(String s) {
+    private static String next(String s) {
             int length = 1;
             char head = s.charAt(0);
             String result = "";
