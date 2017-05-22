@@ -1,42 +1,33 @@
 DOCKER = docker
 IMAGE_PREFIX = plas-runner
 
+DOCKERFILES = $(sort $(wildcard Dockerfile.*))
+# Dockerfile.haskell Dockerfile.java Dockerfile.javascript ...
+PL_ENVS = $(subst ., ,  $(suffix $(DOCKERFILES)))
+# haskell java javascript ...
+
 all : build-runner
 
 # build
 
-build-runner : \
-	build-runner-java \
-	build-runner-haskell \
-	build-runner-javascript \
-	;
+build-runner : $(foreach PL_ENV, $(PL_ENVS), build-runner-$(PL_ENV))
 
-build-runner-java : Dockerfile.java
-	$(DOCKER) build --file=Dockerfile.java --tag $(IMAGE_PREFIX)-java .
-
-build-runner-haskell : Dockerfile.haskell
-	$(DOCKER) build --file=Dockerfile.haskell --tag $(IMAGE_PREFIX)-haskell .
-
-build-runner-javascript : Dockerfile.javascript
-	$(DOCKER) build --file=Dockerfile.javascript --tag $(IMAGE_PREFIX)-javascript .
+define build-runner
+build-runner-$(PL_ENV) : Dockerfile.$(PL_ENV)
+	$(DOCKER) build --file=Dockerfile.$(PL_ENV) --tag $(IMAGE_PREFIX)-$(PL_ENV) .
+endef
+$(foreach PL_ENV, $(PL_ENVS), $(eval $(build-runner)))
 
 
 # run
 
-run : \
-	run-java \
-	run-haskell \
-	run-javascript \
-	;
+run : $(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV))
 
-run-java : build-runner-java
-	$(DOCKER) run $(IMAGE_PREFIX)-java ./run-examples.sh java
-
-run-haskell : build-runner-haskell
-	$(DOCKER) run $(IMAGE_PREFIX)-haskell ./run-examples.sh haskell
-
-run-javascript : build-runner-javascript
-	$(DOCKER) run $(IMAGE_PREFIX)-javascript ./run-examples.sh javascript
+define run
+run-$(PL_ENV) : build-runner-$(PL_ENV)
+	$(DOCKER) run $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
+endef
+$(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
 
 
 # clean
@@ -55,13 +46,9 @@ clean : rm rmi rmi-dangling
 
 .PHONY: \
 	build-runner \
-	build-runner-java \
-	build-runner-haskell \
-	build-runner-javascript \
+	$(foreach PL_ENV, $(PL_ENVS), build-runner-$(PL_ENV)) \
 	run \
-	run-java \
-	run-haskell \
-	run-javascript \
+	$(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV)) \
 	rm \
 	rmi \
 	rmi-dangling \
