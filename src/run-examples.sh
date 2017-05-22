@@ -9,6 +9,11 @@ case "$PL" in
             javac LookAndSay.java
             java  LookAndSay
         )
+        (
+            cd java/java_1/
+            javac LookAndSay.java
+            java  LookAndSay
+        )
         ;;
     "haskell")
         (
