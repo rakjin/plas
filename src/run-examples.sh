@@ -18,9 +18,15 @@ case "$PL" in
         ;;
     "haskell")
         (
-            cd haskell/
+            cd haskell
             ghc haskell_0.hs
             ./haskell_0
+        )
+        ;;
+    "javascript")
+        (
+            cd javascript
+            node javascript_0.js
         )
         ;;
 esac

@@ -8,6 +8,7 @@ all : build-runner
 build-runner : \
 	build-runner-java \
 	build-runner-haskell \
+	build-runner-javascript \
 	;
 
 build-runner-java : Dockerfile.java
@@ -16,12 +17,16 @@ build-runner-java : Dockerfile.java
 build-runner-haskell : Dockerfile.haskell
 	$(DOCKER) build --file=Dockerfile.haskell --tag $(IMAGE_PREFIX)-haskell .
 
+build-runner-javascript : Dockerfile.javascript
+	$(DOCKER) build --file=Dockerfile.javascript --tag $(IMAGE_PREFIX)-javascript .
+
 
 # run
 
 run : \
 	run-java \
 	run-haskell \
+	run-javascript \
 	;
 
 run-java : build-runner-java
@@ -29,6 +34,9 @@ run-java : build-runner-java
 
 run-haskell : build-runner-haskell
 	$(DOCKER) run $(IMAGE_PREFIX)-haskell ./run-examples.sh haskell
+
+run-javascript : build-runner-javascript
+	$(DOCKER) run $(IMAGE_PREFIX)-javascript ./run-examples.sh javascript
 
 
 # clean
@@ -49,9 +57,11 @@ clean : rm rmi rmi-dangling
 	build-runner \
 	build-runner-java \
 	build-runner-haskell \
+	build-runner-javascript \
 	run \
 	run-java \
 	run-haskell \
+	run-javascript \
 	rm \
 	rmi \
 	rmi-dangling \
