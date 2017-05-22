@@ -2,18 +2,19 @@
 
 PL=${1:-java}
 
+run_java(){
+    local SUBDIR=$1
+    (
+        cd "java/${SUBDIR}"
+        javac LookAndSay.java
+        java  LookAndSay
+    )
+}
+
 case "$PL" in
     "java")
-        (
-            cd java/java_0/
-            javac LookAndSay.java
-            java  LookAndSay
-        )
-        (
-            cd java/java_1/
-            javac LookAndSay.java
-            java  LookAndSay
-        )
+        run_java java_0
+        run_java java_1
         ;;
     "haskell")
         (
