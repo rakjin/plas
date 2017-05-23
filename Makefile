@@ -25,7 +25,7 @@ run : $(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV))
 
 define run
 run-$(PL_ENV) : build-runner-$(PL_ENV)
-	$(DOCKER) run $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
+	$(DOCKER) run --rm=true $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
 endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
 
