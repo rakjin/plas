@@ -1,22 +1,22 @@
 DOCKER = docker
-IMAGE_PREFIX = plas-runner
+IMAGE_PREFIX = plas-examples
 
 DOCKERFILES = $(sort $(wildcard Dockerfile.*))
 # Dockerfile.haskell Dockerfile.java Dockerfile.javascript ...
 PL_ENVS = $(subst ., ,  $(suffix $(DOCKERFILES)))
 # haskell java javascript ...
 
-all : build-runner
+all : build
 
 # build
 
-build-runner : $(foreach PL_ENV, $(PL_ENVS), build-runner-$(PL_ENV))
+build: $(foreach PL_ENV, $(PL_ENVS), build-$(PL_ENV))
 
-define build-runner
-build-runner-$(PL_ENV) : Dockerfile.$(PL_ENV)
+define build
+build-$(PL_ENV) : Dockerfile.$(PL_ENV)
 	$(DOCKER) build --file=Dockerfile.$(PL_ENV) --tag $(IMAGE_PREFIX)-$(PL_ENV) .
 endef
-$(foreach PL_ENV, $(PL_ENVS), $(eval $(build-runner)))
+$(foreach PL_ENV, $(PL_ENVS), $(eval $(build)))
 
 
 # run examples
@@ -24,7 +24,7 @@ $(foreach PL_ENV, $(PL_ENVS), $(eval $(build-runner)))
 run : $(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV))
 
 define run
-run-$(PL_ENV) : build-runner-$(PL_ENV)
+run-$(PL_ENV) : build-$(PL_ENV)
 	$(DOCKER) run --rm=true $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
 endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
@@ -33,7 +33,7 @@ $(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
 # open sh
 
 define sh
-sh-$(PL_ENV) : build-runner-$(PL_ENV)
+sh-$(PL_ENV) : build-$(PL_ENV)
 	$(DOCKER) run --rm=true -it $(IMAGE_PREFIX)-$(PL_ENV) /bin/sh
 endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(sh)))
@@ -54,8 +54,8 @@ clean : rm rmi rmi-dangling
 
 
 .PHONY: \
-	build-runner \
-	$(foreach PL_ENV, $(PL_ENVS), build-runner-$(PL_ENV)) \
+	build \
+	$(foreach PL_ENV, $(PL_ENVS), build-$(PL_ENV)) \
 	run \
 	$(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV)) \
 	$(foreach PL_ENV, $(PL_ENVS), sh-$(PL_ENV)) \
