@@ -19,7 +19,7 @@ endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(build-runner)))
 
 
-# run
+# run examples
 
 run : $(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV))
 
@@ -28,6 +28,15 @@ run-$(PL_ENV) : build-runner-$(PL_ENV)
 	$(DOCKER) run --rm=true $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
 endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
+
+
+# open sh
+
+define sh
+sh-$(PL_ENV) : build-runner-$(PL_ENV)
+	$(DOCKER) run --rm=true -it $(IMAGE_PREFIX)-$(PL_ENV) /bin/sh
+endef
+$(foreach PL_ENV, $(PL_ENVS), $(eval $(sh)))
 
 
 # clean
@@ -49,6 +58,7 @@ clean : rm rmi rmi-dangling
 	$(foreach PL_ENV, $(PL_ENVS), build-runner-$(PL_ENV)) \
 	run \
 	$(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV)) \
+	$(foreach PL_ENV, $(PL_ENVS), sh-$(PL_ENV)) \
 	rm \
 	rmi \
 	rmi-dangling \
