@@ -1,3 +1,6 @@
+package java_0;
+
+
 public class LookAndSay {
     public static void main(String... args) {
         String s = "1";

@@ -1,3 +1,6 @@
+package java_1;
+
+
 public class LookAndSay {
     public static void main(String... args) {
         System.out.println(ant(10));
