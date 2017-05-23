@@ -6,7 +6,7 @@ DOCKERFILES = $(sort $(wildcard Dockerfile.*))
 PL_ENVS = $(subst ., ,  $(suffix $(DOCKERFILES)))
 # haskell java javascript ...
 
-all : build
+all : run
 
 # build
 
