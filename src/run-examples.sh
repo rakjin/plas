@@ -15,6 +15,7 @@ case "$PL" in
             run_java java_0
             run_java java_1
             run_java java_2
+            run_java java_3
         )
         ;;
     "haskell")
