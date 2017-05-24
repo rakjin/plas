@@ -1,5 +1,6 @@
 DOCKER = docker
 IMAGE_PREFIX = plas-examples
+EXAMPLES = all
 
 DOCKERFILES = $(sort $(wildcard Dockerfile.*))
 # Dockerfile.haskell Dockerfile.java Dockerfile.javascript ...
@@ -7,11 +8,30 @@ PL_ENVS = $(subst ., ,  $(suffix $(DOCKERFILES)))
 # haskell java javascript ...
 
 
-all : run
+all : usage
+
+usage :
+	@echo Usage:
+	@echo "\tmake"
+	@echo "\tmake usage"
+	@echo ""
+	@echo "\tmake build"
+	@echo "\tmake build-haskell"
+	@echo "\tmake build-java"
+	@echo "\tmake build-XXX"
+	@echo ""
+	@echo "\tmake run"
+	@echo "\tmake run-javascript"
+	@echo "\tmake run-javascript EXAMPLES=javascript_0.js"
+	@echo "\tmake run-haskell EXAMPLES=haskell_0.hs"
+	@echo "\tmake run-java EXAMPLES='java_1 java_3'"
+	@echo "\tmake run-XXX EXAMPLES='AAA BBB CCC'"
+	@echo ""
+	@echo "\tmake clean"
 
 
 # build
-build: $(foreach PL_ENV, $(PL_ENVS), build-$(PL_ENV))
+build : $(foreach PL_ENV, $(PL_ENVS), build-$(PL_ENV))
 
 define build
 build-$(PL_ENV) : Dockerfile.$(PL_ENV)
@@ -24,7 +44,7 @@ $(foreach PL_ENV, $(PL_ENVS), $(eval $(build)))
 run : $(foreach PL_ENV, $(PL_ENVS), run-$(PL_ENV))
 define run
 run-$(PL_ENV) : build-$(PL_ENV)
-	$(DOCKER) run --rm=true $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(PL_ENV)
+	$(DOCKER) run --rm=true --env='PL=$(PL_ENV)' $(IMAGE_PREFIX)-$(PL_ENV) ./run-examples.sh $(EXAMPLES)
 endef
 $(foreach PL_ENV, $(PL_ENVS), $(eval $(run)))
 

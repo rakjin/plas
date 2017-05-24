@@ -1,34 +1,38 @@
 #!/usr/bin/env sh
 
-PL=${1:-java}
+set -e
 
-run_java(){
-    local SUBDIR=$1
-    javac ${SUBDIR}/*.java
-    java -classpath . "${SUBDIR}.LookAndSay"
-}
+PL=${PL:-java}
+EXAMPLES=${@:-all}
+if [ "$EXAMPLES" = "all" ]; then
+    EXAMPLES=$(ls "$PL" | sort)
+fi
 
 case "$PL" in
     "java")
         (
             cd java
-            run_java java_0
-            run_java java_1
-            run_java java_2
-            run_java java_3
+            for EXAMPLE in $(echo "$EXAMPLES"); do
+                javac "$EXAMPLE"/*.java
+                java -classpath . "$EXAMPLE.LookAndSay"
+            done
         )
         ;;
     "haskell")
         (
             cd haskell
-            ghc haskell_0.hs
-            ./haskell_0
+            for EXAMPLE in $(echo "$EXAMPLES"); do
+                ghc "$EXAMPLE"
+                ./"${EXAMPLE%.hs}"
+            done
         )
         ;;
     "javascript")
         (
             cd javascript
-            node javascript_0.js
+            for EXAMPLE in $(echo "$EXAMPLES"); do
+                node "$EXAMPLE"
+            done
         )
         ;;
 esac
