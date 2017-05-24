@@ -31,7 +31,7 @@ case "$PL" in
         (
             cd javascript
             for EXAMPLE in $(echo "$EXAMPLES"); do
-                node "$EXAMPLE"
+                node --max_old_space_size=4096 "$EXAMPLE"
             done
         )
         ;;
