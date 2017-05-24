@@ -27,6 +27,10 @@ usage :
 	@echo "\tmake run-java EXAMPLES='java_1 java_3'"
 	@echo "\tmake run-XXX EXAMPLES='AAA BBB CCC'"
 	@echo ""
+	@echo "\tmake sh-java"
+	@echo "\tmake sh-haskell"
+	@echo "\tmake sh-XXX"
+	@echo ""
 	@echo "\tmake clean"
 
 
@@ -68,6 +72,7 @@ clean : rm rmi rmi-dangling
 
 
 .PHONY: \
+	usage \
 	build \
 	$(foreach PL_ENV, $(PL_ENVS), build-$(PL_ENV)) \
 	run \
